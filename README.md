@@ -1,4 +1,4 @@
-# 3DCNN-MQA
+# GCMQA
 
 ## Requirement
 - python==3.6
@@ -44,14 +44,19 @@ python predict.py -d ../sample/pdb_files -f ../sample/T0759.fasta -o ../sample/r
 ```
 ## Sample Output
 ```text
-Input Data Path : /gs/hs0/tga-ishidalab/sato/dataset/test_set_not_H/pdb_style/casp11/stage_1/T0759/T0759TS022_2.pdb
-Model Quality Score : 0.2598034739494324
-Resid	Resname	Score
-13	VAL	0.18779
-14	ILE	0.37449
-15	HIS	0.18374
-16	PRO	0.41228
-17	ASP	0.29165
+Generate Graph...
+Needleman-Wunsch global alignment of two sequences
+Predict...
+Input Data Path : ../sample/pdb_files/sample_1.pdb
+Model Quality Score : 0.30910
+Resid	Resname	CAD Score	lDDT Score
+13	VAL	0.29541	0.44377
+14	ILE	0.11032	0.14017
+15	HIS	0.19361	0.09477
+16	PRO	0.34011	0.13474
+17	ASP	0.66549	0.13497
+18	PRO	0.18304	0.06425
+19	GLY	0.34607	0.09066
 ...
 ```
 

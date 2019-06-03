@@ -32,7 +32,7 @@ def predict(input_path, target_path, pssm_path, predicted_ss_path, predicted_rsa
     print('Model Quality Score : {:.5f}'.format(global_score))
     print('Resid\tResname\tCAD Score\tlDDT Score')
     for i in range(len(resname)):
-        print('{}\t{}\t{:.5f}'.format(resid[i], resname[i], cad[i], lddt[i]))
+        print('{}\t{}\t{:.5f}\t{:.5f}'.format(resid[i], resname[i], cad[i], lddt[i]))
     if out_path:
         out_dict = {'local_cad': cad, 'local_lddt': lddt, 'global_score': global_score}
         np.savez(out_path, **out_dict)
