@@ -57,10 +57,10 @@
     ]
   },
   "csv_path" :      "./casp_path_list_uniref90.csv",
-  "data_path" :     "/gs/hs0/tga-ishidalab/sato/graph/CASP_SCWRL_not_H/id_align_uniref90_rosetta_edge_distance_8",
+  "data_path" :     "/gs/hs0/tga-ishidalab/sato/graph/CASP_SCWRL_not_H/uniref_2019_04",
   "label_path" :    "/gs/hs0/tga-ishidalab/sato/dataset/CASP_SCWRL_not_H/label/all_score",
-  "local_label" :   ["local_cad", "local_lddt"], "local_threshold" : [0.5],
+  "local_label" :   ["local_cad"], "local_threshold" : [0.5],
   "global_label" :  ["GDT_TS"], "local_type" : "Classification", "train_rate" : 0.8, "data_frac" : 0.25,
-  "global_mode" :   1, "local_mode" : 0, "batch_size" : 2, "epoch" : 20, "optimizer" : "Adam",
+  "global_mode" :   0, "local_mode" : 1, "batch_size" : 2, "epoch" : 20, "optimizer" : "Adam",
   "learning_rate" : 0.001, "vertex_feature" : ["base", "profile", "rosetta"]
 }

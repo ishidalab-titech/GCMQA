@@ -103,7 +103,7 @@ class Model(chainer.Chain):
         with function.no_backprop_mode(), chainer.using_config('train', False):
             local_score, global_score = self.__call__(vertex, edge, adj, num_array, batch_indices)
             local_score = F.sigmoid(local_score)
-            return local_score, global_score
+            return local_score
 
     def __call__(self, vertex, edge, adj, num_array, batch_indices):
         vertex, edge, adj, num_array = self.stem_model(vertex, edge, adj, num_array)
