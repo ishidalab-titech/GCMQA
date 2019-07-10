@@ -34,9 +34,9 @@ def predict(input_path, target_path, pssm_path, predicted_ss_path,
                                     adj=adj, num_array=num_array,
                                     batch_indices=batch_indices)
 
-    cad_score = lddt_model.predict(vertex=vertex, edge=edge,
-                                   adj=adj, num_array=num_array,
-                                   batch_indices=batch_indices)
+    cad_score = cad_model.predict(vertex=vertex, edge=edge,
+                                  adj=adj, num_array=num_array,
+                                  batch_indices=batch_indices)
     lddt_score = cuda.to_gpu(lddt_score.data)
     cad_score = cuda.to_gpu(cad_score.data)
     global_score = np.mean(lddt_score + cad_score)

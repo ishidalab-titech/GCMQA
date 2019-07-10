@@ -61,24 +61,7 @@ Resid	Resname	CAD Score	lDDT Score
 ```
 
 
-## Installation and Usage with Docker
 
-### Instalattion
-- Download Rosetta==2018.33, Scwrl4, Accpro5
-
-```bash
-docker pull ishidalab/gcmqa ???
-```
-
-### Usage
-```bash
-docker run 
--v /your_directory/rosetta_bin_linux_2018.33.60351_bundle:/data/rosetta
--v /your_directory/SCRATCH-1D_1.2:/data/scratch 
--v /your_directory/Scwrl4/:/data/scwrl4
--v /your_directory/uniref90:/data/uniref90
---name sato_gcmqa  ishidalab/gcmqa 
-```
 
 ## Reference
 [1] : EMBOSS: The European Molecular Biology Open Software Suite (2000) Rice,P. Longden,I. and Bleasby,A. Trends in Genetics 16, (6) pp276--277
