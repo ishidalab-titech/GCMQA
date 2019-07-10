@@ -37,9 +37,9 @@ def predict(input_path, target_path, pssm_path, predicted_ss_path,
     cad_score = cad_model.predict(vertex=vertex, edge=edge,
                                   adj=adj, num_array=num_array,
                                   batch_indices=batch_indices)
-    lddt_score = cuda.to_gpu(lddt_score.data)
-    cad_score = cuda.to_gpu(cad_score.data)
-    global_score = np.mean(lddt_score + cad_score)
+    lddt_score = cuda.to_cpu(lddt_score.data).ravel()
+    cad_score = cuda.to_cpu(cad_score.data).ravel()
+    global_score = np.mean(lddt_score + cad_score) / 2
     print('Input Data Path : {}'.format(input_path))
     print(
         'Model Quality Score : {:.5f}'.format(global_score))

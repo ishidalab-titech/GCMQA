@@ -20,7 +20,7 @@ pip install scipy==1.1.0
 pip install pandas==0.23.1
 pip install pyparsing==2.2.0
 pip install ProDy==1.10.8
-pip install chainer==5.2.0
+pip install chainer>5.2.0
 ```
 - Edit example_path.sh for your environment
 
@@ -33,13 +33,14 @@ cd your_download_directory/source
 for file in `ls ../sample/pdb_files/*.pdb`; do  Scwrl4 -i ${file} -o ${file}; done
 
 # Generate PSSM and predicted SS and predicted RSA
+source ../example_path.sh
 python preprocess.py -i ../sample/T0759.fasta -o ../sample/profile -d /your_directory/uniref90/uniref90 -n 4
 
 # Predict Model Quality Score from PDBfiles (using CPU)
-python predict.py -d ../sample/pdb_files -f ../sample/T0759.fasta -o ../sample/result -m ../data/pretrained_model.npz -p ../sample/profile
+python predict.py -d ../sample/pdb_files -f ../sample/T0759.fasta -o ../sample/result -p ../sample/profile
 
 # Predict Model Quality Score from PDBfiles (using GPU, device=0)
-python predict.py -d ../sample/pdb_files -f ../sample/T0759.fasta -o ../sample/result -m ../data/pretrained_model.npz -p ../sample/profile -g 0
+python predict.py -d ../sample/pdb_files -f ../sample/T0759.fasta -o ../sample/result -p ../sample/profile -g 0
 
 ```
 ## Sample Output
@@ -48,15 +49,14 @@ Generate Graph...
 Needleman-Wunsch global alignment of two sequences
 Predict...
 Input Data Path : ../sample/pdb_files/sample_1.pdb
-Model Quality Score : 0.30910
+Model Quality Score : 0.26355
 Resid	Resname	CAD Score	lDDT Score
-13	VAL	0.29541	0.44377
-14	ILE	0.11032	0.14017
-15	HIS	0.19361	0.09477
-16	PRO	0.34011	0.13474
-17	ASP	0.66549	0.13497
-18	PRO	0.18304	0.06425
-19	GLY	0.34607	0.09066
+13	VAL	0.36541	0.29237
+14	ILE	0.06478	0.13979
+15	HIS	0.25906	0.06036
+16	PRO	0.26510	0.02815
+17	ASP	0.82222	0.04054
+18	PRO	0.36372	0.02228
 ...
 ```
 
