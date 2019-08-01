@@ -20,7 +20,7 @@ pip install scipy==1.1.0
 pip install pandas==0.23.1
 pip install pyparsing==2.2.0
 pip install ProDy==1.10.8
-pip install chainer>5.2.0
+pip install chainer==5.2.0
 ```
 - Edit example_path.sh for your environment
 
