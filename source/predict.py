@@ -1,11 +1,12 @@
 from training.model import build_model
 from pathlib import Path
 import chainer
+import chainer.functions as F
 import numpy as np
 import json, argparse
 from graph.make_graph import make_graph
-from training.dataset import vertex_to_device_batch, edge_adj_to_device_batch
 from chainer.backends import cuda
+from training.dataset import convert_data
 
 
 def load_model(config, model_path):
@@ -24,21 +25,17 @@ def predict(input_path, target_path, pssm_path, predicted_ss_path,
                                                    pssm_path=pssm_path,
                                                    predicted_ss_path=predicted_ss_path,
                                                    predicted_rsa_path=predicted_rsa_path)
-    vertex = vertex_to_device_batch(arrays=[vertex], device=device)
-    edge, adj, num_array = edge_adj_to_device_batch(edge_list=[edge],
-                                                    adj_list=[adj],
-                                                    device=device)
-    batch_indices = np.array([vertex.shape[0]])
+    vertex, edge, adj = [vertex], [edge], [adj]
+    vertex, edge, adj = convert_data(vertex, edge, adj, device)
+    length = np.array([vertex.shape[1]])
     print('Predict...')
-    lddt_score = lddt_model.predict(vertex=vertex, edge=edge,
-                                    adj=adj, num_array=num_array,
-                                    batch_indices=batch_indices)
+    lddt_score, _ = lddt_model.predict(vertex=vertex, edge=edge, adj=adj,
+                                       length=length)
 
-    cad_score = cad_model.predict(vertex=vertex, edge=edge,
-                                  adj=adj, num_array=num_array,
-                                  batch_indices=batch_indices)
-    lddt_score = cuda.to_cpu(lddt_score.data).ravel()
-    cad_score = cuda.to_cpu(cad_score.data).ravel()
+    cad_score, _ = cad_model.predict(vertex=vertex, edge=edge, adj=adj,
+                                     length=length)
+    lddt_score = cuda.to_cpu(F.sigmoid(lddt_score).data).ravel()
+    cad_score = cuda.to_cpu(F.sigmoid(cad_score).data).ravel()
     global_score = np.mean(lddt_score + cad_score) / 2
     print('Input Data Path : {}'.format(input_path))
     print(

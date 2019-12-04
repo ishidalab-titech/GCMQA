@@ -49,14 +49,13 @@ Generate Graph...
 Needleman-Wunsch global alignment of two sequences
 Predict...
 Input Data Path : ../sample/pdb_files/sample_1.pdb
-Model Quality Score : 0.26355
+Model Quality Score : 0.32493
 Resid	Resname	CAD Score	lDDT Score
-13	VAL	0.36541	0.29237
-14	ILE	0.06478	0.13979
-15	HIS	0.25906	0.06036
-16	PRO	0.26510	0.02815
-17	ASP	0.82222	0.04054
-18	PRO	0.36372	0.02228
+13	VAL	0.24819	0.32251
+14	ILE	0.08692	0.10331
+15	HIS	0.26113	0.03394
+16	PRO	0.33067	0.35329
+17	ASP	0.72366	0.14106
 ...
 ```
 
