@@ -38,8 +38,9 @@ def predict(input_path, target_path, pssm_path, predicted_ss_path,
     cad_score = cuda.to_cpu(F.sigmoid(cad_score).data).ravel()
     global_score = np.mean(lddt_score + cad_score) / 2
     print('Input Data Path : {}'.format(input_path))
-    print(
-        'Model Quality Score : {:.5f}'.format(global_score))
+    print('GCMQA_lDDT : {:.5f}'.format(lddt_score.mean()))
+    print('GCMQA_CAD : {:.5f}'.format(cad_score.mean()))
+    print('GCMQA_ensemble : {:.5f}'.format(global_score))
     if not verbose:
         print('Resid\tResname\tCAD Score\tlDDT Score')
         for i in range(len(resname)):
