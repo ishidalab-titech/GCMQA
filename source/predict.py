@@ -75,10 +75,10 @@ if __name__ == '__main__':
     else:
         input_path_list = Path(args.input_path)
 
-    lddt_model = load_model(json.load(open('../data/config.json', 'r')),
+    lddt_model = load_model(json.load(open('../data/lddt_config.json', 'r')),
                             model_path='../data/lddt_model.npz')
 
-    cad_model = load_model(json.load(open('../data/config.json', 'r')),
+    cad_model = load_model(json.load(open('../data/cad_config.json', 'r')),
                            model_path='../data/cad_model.npz')
     if args.gpu >= 0:
         lddt_model.to_gpu(device=args.gpu)

@@ -149,11 +149,3 @@ class Classifier(link.Chain):
         loss.name = 'Loss'
         chainer.reporter.report({'loss': loss}, self)
         return loss
-
-
-if __name__ == '__main__':
-    import json
-
-    config = json.load(open('./data/config.json', 'r'))['Config'][0]
-    model = _get_model(layers=config['model']['stem_model'], comm=None)
-    print(model)

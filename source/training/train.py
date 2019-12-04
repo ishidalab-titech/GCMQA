@@ -48,7 +48,7 @@ def main():
                         help='Resume only weight')
     parser.add_argument('--config', '-c', type=int, default=0,
                         help='Number of config')
-    parser.add_argument('--config_file', type=str, default='./data/config.json',
+    parser.add_argument('--config_file', type=str, default='./data/lddt_config.json',
                         help='Config file path')
 
     args = parser.parse_args()
@@ -175,7 +175,7 @@ def main():
         if not out_path.exists():
             out_path.mkdir(parents=True, exist_ok=True)
         np.savez(os.path.join(args.out, 'protein_name'), **protein_name_dict)
-        f = open(os.path.join(args.out, 'config.json'), 'w')
+        f = open(os.path.join(args.out, 'lddt_config.json'), 'w')
         json.dump(config, f, ensure_ascii=False, indent=4, sort_keys=True, separators=(',', ': '))
         f.close()
         f = open(os.path.join(args.out, 'args.json'), 'w')
