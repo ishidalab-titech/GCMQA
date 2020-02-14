@@ -1,0 +1,48 @@
+{
+  "model" :          {
+    "stem_model" :     [
+      {"name" : "GC.NodeAverage", "parameter" : {"v_in_size" : null, "out_size" : 64}},
+      {"name" : "GC.GraphNorm", "parameter" : {"size" : 64}},
+      {"name" : "GC.GraphActivation", "parameter" : {"activation" : "F.relu"}},
+      {"name" : "GC.NodeAverage", "parameter" : {"v_in_size" : null, "out_size" : 64}},
+      {"name" : "GC.GraphNorm", "parameter" : {"size" : 64}},
+      {"name" : "GC.GraphActivation", "parameter" : {"activation" : "F.relu"}},
+      {"name" : "GC.NodeAverage", "parameter" : {"v_in_size" : null, "out_size" : 128}},
+      {"name" : "GC.GraphNorm", "parameter" : {"size" : 128}},
+      {"name" : "GC.GraphActivation", "parameter" : {"activation" : "F.relu"}},
+      {"name" : "GC.NodeAverage", "parameter" : {"v_in_size" : null, "out_size" : 128}},
+      {"name" : "GC.GraphNorm", "parameter" : {"size" : 128}},
+      {"name" : "GC.GraphActivation", "parameter" : {"activation" : "F.relu"}}
+    ],
+    "local_model" :    [
+      {"name" : "GC.NodeAverage", "parameter" : {"v_in_size" : null, "out_size" : 256}},
+      {"name" : "GC.GraphNorm", "parameter" : {"size" : 256}},
+      {"name" : "GC.GraphActivation", "parameter" : {"activation" : "F.relu"}},
+      {"name" : "Flat", "parameter" : {}},
+      {"name" : "GC.GraphLinear", "parameter" : {"in_size" : null, "out_size" : 256}},
+      {"name" : "GC.GraphNorm", "parameter" : {"size" : 256}},
+      {"name" : "GC.GraphActivation", "parameter" : {"activation" : "F.relu"}}
+    ],
+    "global_message" : [
+      {"name" : "GC.NodeAverage", "parameter" : {"v_in_size" : null, "out_size" : 256}},
+      {"name" : "GC.GraphNorm", "parameter" : {"size" : 256}},
+      {"name" : "GC.GraphActivation", "parameter" : {"activation" : "F.relu"}},
+      {"name" : "Flat", "parameter" : {}}
+    
+    ],
+    "global_readout" : [
+      {"name" : "FuncReadout", "parameter" : {"func" : "F.mean"}},
+      {"name" : "L.Linear", "parameter" : {"in_size" : null, "out_size" : 256}},
+      {"name" : "L.BatchNormalization", "parameter" : {"size" : 256}},
+      {"name" : "F.relu", "parameter" : {}}
+    ]
+  },
+  "csv_path" :       "./casp_path_list_uniref90.csv",
+  "data_path" :      "/groups1/gab50343/acb11010kg/GCMQA_experiment/graph/CASP_SCWRL_not_H/uniref_2019_04",
+  "label_path" :     "/groups1/gab50343/acb11010kg/GCMQA_experiment/label/all_score",
+  "local_label" :    ["local_lddt", "local_cad"], "local_threshold" : [0.5],
+  "global_label" :   "GDT_TS", "local_type" : "Classification", "train_rate" : 0.8, "data_frac" : 0.25,
+  "global_mode" :    true, "local_mode" : true, "batch_size" : 8, "epoch" : 40,
+  "optimizer" :      {"name" : "Adam", "parameter" : {"alpha" : 0.001, "weight_decay_rate" : 0.000005}},
+  "vertex_feature" : ["base", "profile", "rosetta"], "edge_feature" : ["angle", "distance"]
+}

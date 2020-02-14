@@ -17,8 +17,8 @@ def load_model(config, model_path):
 
 
 def predict(input_path, target_path, pssm_path, predicted_ss_path,
-            predicted_rsa_path, lddt_model, cad_model, device, out_path=None,
-            verbose=False):
+            predicted_rsa_path, lddt_model, cad_model, multi_model, device,
+            out_path=None, verbose=False):
     print('Generate Graph...')
     vertex, edge, adj, resname, resid = make_graph(input_path=input_path,
                                                    target_path=target_path,
@@ -29,18 +29,23 @@ def predict(input_path, target_path, pssm_path, predicted_ss_path,
     vertex, edge, adj = convert_data(vertex, edge, adj, device)
     length = np.array([vertex.shape[1]])
     print('Predict...')
-    lddt_score, _ = lddt_model.predict(vertex=vertex, edge=edge, adj=adj,
-                                       length=length)
+    lddt_score = lddt_model.predict(vertex=vertex, edge=edge, adj=adj,
+                                    length=length, local=True)
 
-    cad_score, _ = cad_model.predict(vertex=vertex, edge=edge, adj=adj,
-                                     length=length)
+    cad_score = cad_model.predict(vertex=vertex, edge=edge, adj=adj,
+                                  length=length, local=True)
+    multi_score = multi_model.predict(vertex=vertex, edge=edge, adj=adj,
+                                      length=length, local=False)
+
     lddt_score = cuda.to_cpu(F.sigmoid(lddt_score).data).ravel()
     cad_score = cuda.to_cpu(F.sigmoid(cad_score).data).ravel()
+    multi_score = cuda.to_cpu(multi_score.data).ravel()[0]
     global_score = np.mean(lddt_score + cad_score) / 2
     print('Input Data Path : {}'.format(input_path))
     print('GCMQA_lDDT : {:.5f}'.format(lddt_score.mean()))
     print('GCMQA_CAD : {:.5f}'.format(cad_score.mean()))
     print('GCMQA_ensemble : {:.5f}'.format(global_score))
+    print('GCMQA_multi : {:.5f}'.format(multi_score))
     if not verbose:
         print('Resid\tResname\tCAD Score\tlDDT Score')
         for i in range(len(resname)):
@@ -75,12 +80,14 @@ if __name__ == '__main__':
 
     lddt_model = load_model(json.load(open('../data/lddt_config.json', 'r')),
                             model_path='../data/lddt_model.npz')
-
     cad_model = load_model(json.load(open('../data/cad_config.json', 'r')),
                            model_path='../data/cad_model.npz')
+    multi_model = load_model(json.load(open('../data/multi_config.json', 'r')),
+                             model_path='../data/multi_model.npz')
     if args.gpu >= 0:
         lddt_model.to_gpu(device=args.gpu)
         cad_model.to_gpu(device=args.gpu)
+        multi_model.to_gpu(device=args.gpu)
     preprocess_dir_path = Path(args.preprocess_dir_path)
     pssm_path = preprocess_dir_path / Path(args.fasta_path).with_suffix(
         '.pssm').name
@@ -94,6 +101,6 @@ if __name__ == '__main__':
         predict(input_path=input_path, target_path=args.fasta_path,
                 pssm_path=pssm_path, predicted_ss_path=predicted_ss_path,
                 predicted_rsa_path=predicted_rsa_path, lddt_model=lddt_model,
-                cad_model=cad_model, device=args.gpu,
+                cad_model=cad_model, multi_model=multi_model, device=args.gpu,
                 out_path=out_dir_path / input_path.with_suffix('.npz').name,
                 verbose=args.verbose)

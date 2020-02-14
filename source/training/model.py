@@ -11,6 +11,9 @@ from functools import partial
 from chainer import function
 
 
+# from chainer_chemistry.links import Set2Set
+
+
 def _get_model(layers, comm, predict=False):
     model = Sequential()
     W = chainer.initializers.HeNormal(1 / np.sqrt(1 / 2), dtype=np.float32)
@@ -30,6 +33,11 @@ def _get_model(layers, comm, predict=False):
             add_layer = partial(eval(name), **parameter)
         elif name == 'Flat':
             add_layer = partial(lambda *x: x[0])
+        elif name == 'FuncReadout':
+            parameter['func'] = eval(parameter['func'])
+            add_layer = eval(name)(**parameter)
+        else:
+            add_layer = eval(name)(**parameter)
         model.append(add_layer)
     return model
 
@@ -65,12 +73,37 @@ class GlobalModel(chainer.Chain):
 
     def __call__(self, vertex, edge, adj, length):
         vertex = self.global_message(vertex, adj, edge)
-        global_feature = [v[:l] for v, l in zip(vertex, length)]
-
-        # Simply mean value
-        global_feature = F.vstack([F.mean(i, axis=0) for i in global_feature])
-        global_score = F.sigmoid(self.out(self.global_readout(global_feature)))
+        global_feature = self.global_readout(vertex, length)
+        global_score = F.sigmoid(self.out(global_feature))
         return global_score
+
+
+class FuncReadout(chainer.Chain):
+    def __init__(self, func=F.mean):
+        super(FuncReadout, self).__init__()
+        self.func = func
+
+    def __call__(self, vertex, length):
+        global_feature = [v[:l] for v, l in zip(vertex, length)]
+        global_feature = F.vstack(
+            [self.func(i, axis=0) for i in global_feature])
+        return global_feature
+
+
+class Set2SetReadout(chainer.Chain):
+    def __init__(self, in_channels, n_layers=1, processing_steps=3):
+        super(Set2SetReadout, self).__init__()
+        self.in_channels = in_channels
+        self.n_layers = n_layers
+        self.processing_steps = processing_steps
+        with self.init_scope():
+            self.set2set = Set2Set(in_channels=in_channels, n_layers=n_layers)
+
+    def __call__(self, vertex, length):
+        self.set2set.reset_state()
+        for i in range(self.processing_steps):
+            g = self.set2set(vertex)
+        return g
 
 
 class LocalModel(chainer.Chain):
@@ -98,10 +131,18 @@ class Model(chainer.Chain):
             self.local_model = local_model
             self.global_model = global_model
 
-    def predict(self, vertex, edge, adj, length):
+    def predict(self, vertex, edge, adj, length, local=True):
         with function.no_backprop_mode(), chainer.using_config('train', False):
-            local_score, global_score = self.__call__(vertex, edge, adj, length)
-            return local_score, global_score
+            if local:
+                vertex = self.stem_model(vertex, adj, edge)[0]
+                local_score = self.local_model(vertex=vertex, edge=edge,
+                                               adj=adj, length=length)
+                return local_score
+            else:
+                vertex = self.stem_model(vertex, adj, edge)[0]
+                global_score = self.global_model(vertex=vertex, edge=edge,
+                                                 adj=adj, length=length)
+                return global_score
 
     def __call__(self, vertex, edge, adj, length):
         vertex = self.stem_model(vertex, adj, edge)[0]
@@ -121,7 +162,8 @@ class Classifier(link.Chain):
         with self.init_scope():
             self.predictor = predictor
 
-    def __call__(self, vertex, edge, adj, length, local_label, global_label, name):
+    def __call__(self, vertex, edge, adj, length, local_label, global_label,
+                 name):
         local_score, global_score = self.predictor(vertex=vertex, edge=edge,
                                                    adj=adj, length=length)
 
@@ -149,3 +191,11 @@ class Classifier(link.Chain):
         loss.name = 'Loss'
         chainer.reporter.report({'loss': loss}, self)
         return loss
+
+
+if __name__ == '__main__':
+    import json
+
+    config = json.load(open('data/105/last.json', 'r'))['Config'][0]
+    model = _get_model(layers=config['model']['global_readout'], comm=None)
+    print(model)
