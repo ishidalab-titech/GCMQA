@@ -1,4 +1,13 @@
 # GCMQA
+**Graph Convolution based protein structure Model Quality Assessment**
+
+## Table of Contents
+* [Requirement](#Requierment)
+* [Preparation](#Preparation)
+* [Usage](#Usage)
+* [Sample-Output](#Sample-Output)
+* [Reference](#Reference)
+
 
 ## Requirement
 - python==3.6
@@ -43,17 +52,19 @@ python predict.py -d ../sample/pdb_files -f ../sample/T0759.fasta -o ../sample/r
 python predict.py -d ../sample/pdb_files -f ../sample/T0759.fasta -o ../sample/result -p ../sample/profile -g 0
 
 ```
-## Sample Output
+## Sample-Output
 ```text
 Generate Graph...
 Needleman-Wunsch global alignment of two sequences
 Predict...
 Input Data Path : ../sample/pdb_files/sample_1.pdb
-Model Quality Score : 0.32493
+GCMQA_lDDT : 0.34580
+GCMQA_CAD : 0.30406
+GCMQA_ensemble : 0.32493
+GCMQA_multi : 0.34861
 Resid	Resname	CAD Score	lDDT Score
 13	VAL	0.24819	0.32251
 14	ILE	0.08692	0.10331
-15	HIS	0.26113	0.03394
 16	PRO	0.33067	0.35329
 17	ASP	0.72366	0.14106
 ...
